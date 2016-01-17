@@ -1,0 +1,77 @@
+<%= render :partial => 'static_pages/notice_panel' %>
+
+<div class="row">
+  <div class="col-md-7">
+    <h1>Buscar Tramite </h1>
+    <br>
+  </div>
+  <div class="col-md-5">
+    <%= render :partial => 'procedures/search' %>
+    <div class="form-inline">
+      <br>
+      <%= form_tag( procedures_path , :method => "get", id: "search-form") do %>
+          <%= text_field_tag :search, params[:search], placeholder: "Nombre de proyecto", :class=>'form-control' %>
+          <%= submit_tag "Buscar" ,:class=>'btn btn-default'%>
+      <% end %>
+    </div>
+  </div>
+</div>
+<h1>Lista de Tramites</h1>
+<br>
+
+<%if @procedures.empty? %>
+    <div class="row center actions">
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          En este momento no hay tramites disponibles para mostrar.
+        </div>
+      </div>
+    </div>
+<% else %>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Proyecto</th>
+          <th>Estado</th>
+          <th>RL</th>
+          <th>Revisor</th>
+          <th colspan="2"></th>
+        </tr>
+      </thead>
+
+      <tbody class="cream-pixels">
+        <% @procedures.each do |procedure| %>
+          <tr>
+            <td><%= procedure.project.name %></td>
+            <td><%if procedure.state == 1 %>
+                  <h4><span class="label label-info">Inicial</span></h4>
+              <%elsif procedure.state == 2 %>
+                  <h4><span class="label label-warning">En revision</span></h4>
+              <%elsif procedure.state == 3 %>
+                  <h4><span class="label label-primary">Revisado</span></h4>
+              <%elsif procedure.state == 4 %>
+                  <h4><span class="label label-success">Aceptado</span></h4>
+              <%else%>
+                  <h4><span class="label label-danger">Rechazado</span></h4>
+              <%end%>
+            </td>
+            <td><%= procedure.legal_agent.person.first_name %> <%= procedure.legal_agent.person.last_name %></td>
+            <td>
+                <%if procedure.user %>
+                  <%= procedure.user.person.first_name %> <%= procedure.user.person.last_name %>
+                <%else%>
+                  Ningun revisor asignado
+              <%end%>
+            </td>
+            <td><%= link_to 'Ver', procedure , class:'btn btn-default'%></td>
+            <%if current_user.role==1 or current_user.role==4 %>
+                <td><%= link_to 'Eliminar', procedure, method: :delete, data: { confirm: 'Confirmacion?'}, class:'btn btn-danger'  %></td>
+            <%end%>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+<br>
+
+<%end%>

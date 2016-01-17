@@ -1,0 +1,79 @@
+<%= form_for(@verification_list) do |f| %>
+    <% if @verification_list.errors.any? %>
+        <div class="row">
+          <div class="col-md-3"></div>
+          <div class="col-md-6">
+
+            <div class="panel panel-danger">
+              <div class="panel-heading">Errores al registrar la lista</div>
+              <ul class="list-group">
+                <% @verification_list.errors.full_messages.each do |message| %>
+                    <li class='list-group-item'><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+    <% end %>
+
+    <div class="row" id="error-panel" style="display: none">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
+        <div class="panel panel-danger">
+          <div class="panel-heading"> <p id="error-panel-message"></p> </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="col-md-5 row">
+  <h3>Información de lista</h3>
+
+    <!--<div class="field">-->
+      <%#= f.label :categoria %><br>
+      <!--<%#= f.select :list_category_id, options_from_collection_for_select(ListCategory.all, 'id', 'name'), {}, {class: 'form-control', onclick:'changeList()'} %>-->
+    <!--</div>-->
+    <!--<br>-->
+
+    <div class="field">
+      <%= f.label :Nombre %> <i class="fa fa-asterisk"></i> <i> (ayuda a identificar la funcion de la lista rapidamente)</i><br>
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
+    <br>
+
+    <div class="panel panel-info">
+      <div class="panel-heading">(<i class="fa fa-asterisk"></i>)   Campo requerido</div>
+    </div>
+
+    <div class="actions">
+      <%= f.submit 'Aceptar', class: 'btn btn-default', id:'crearLista' %>
+    </div><br>
+
+    <div class="panel panel-info">
+      <div class="panel-heading">Nota: Dejar en el campo en blanco para eliminarlo.</div>
+    </div>
+    <div class="panel panel-info">
+      <div class="panel-heading">Nota: Los campos seran evaluados por un revisor, los criterios de evaluacion deben estar en la descripcion.</div>
+    </div>
+
+  </div>
+  <div class="col-md-7">
+
+        <div class="scroll-div">
+            <h3>Campos de verificacion</h3>
+            <label >Existe(n) <label id="count" ><%= if @count then @count else '0' end %></label> campo(s) de verificación en total</label>
+
+            <div class="col-md-offset-1 row" id="fields">
+
+              <%= f.fields_for :verification_fields do |builder| %>
+                  <%= render 'verification_field', :f => builder %>
+              <% end %>
+            </div><br>
+
+          <div>
+            <button onclick="addField()" type="button" class="btn btn-success">Agregar campo de verificacion</button><br>
+          </div><br>
+
+
+    </div>
+  </div>
+<% end %>

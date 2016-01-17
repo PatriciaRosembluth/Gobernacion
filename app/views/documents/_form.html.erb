@@ -1,0 +1,164 @@
+<%= form_for(@document) do |f| %>
+    <% if @document.errors.any? %>
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+
+          <div class="panel panel-danger">
+            <div class="panel-heading">Errores al registrar documento</div>
+            <ul class="list-group">
+              <% @document.errors.full_messages.each do |message| %>
+                  <li class='list-group-item'><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-3"></div>
+    <% end %>
+
+    <div class="row">
+        <div class="col-md-6">
+          <br><br><br><br><br>
+          <div class="field">
+            <%= f.label :Nombre %> <i class="fa fa-asterisk"></i><br>
+            <%= f.text_field :typename, class: 'form-control' %>
+          </div>
+          <br>
+          <div class="actions">
+            <%= f.submit :Registrar, class: 'btn btn-default', id: 'document-submit-button'%>
+          </div>
+        </div>
+      <!-- VERIFICATION LIST FIELDS WRAPPER -->
+        <div class="col-md-6">
+         <h2>Listas de Verificación necesarias para revisar el documento.</h2>
+
+          <div class="col-md-12" id="lists-error-div" style="display: none">
+            <div class="panel panel-danger">
+              <div class="panel-heading">Errores al agregar listas de verificación</div>
+              <ul class="list-group" id="lists-errors">
+              </ul>
+            </div>
+          </div>
+
+            <% if VerificationList.all.count == 0 %>
+              <div class="row center actions panel panel-danger">
+                <div class="panel-heading">
+                  <p>No existen listas de verificacion por el momento, registra <%=link_to :aquí, new_verification_list_path %> </p>
+                </div>
+              </div>
+            <%else%>
+
+              <div class="field" id="list-options-template" style="display: none ;">
+                <% VerificationList.all.each do |list| %>
+                    <option value="<%= list.id %>"><%= list.name %></option>
+                <% end %>
+              </div>
+
+              <div class="col-md-offset-1 row" id="verification-list-fields">
+                <label >Existe(n) <label id="verification-list-count" ><%= if @count then @count else '0' end %></label> campo(s) de verificación en total</label>
+                <%= f.fields_for :revisions do |builder| %>
+                    <%= render 'revision_field', :f => builder %>
+                <% end %>
+                <br>
+              </div>
+
+              <div class="field">
+                <a class="btn btn-success" onclick="addVerificationList()"> Agregar Lista de Verificación</a>
+              </div>
+          <% end %>
+
+          <br>
+        </div>
+    </div>
+    <br/>
+<% end %>
+
+<script>
+    var verificationListsCount = 0;
+    var toShowCount = $('.revisionField').length;
+
+    $('#document-submit-button').on('click', function(event){
+        var revision = $('.revisionField :selected').filter(function() { return $(this).parent().parent().parent().css("display") != "none" });
+
+        if(revision.length == 0){
+            event.preventDefault();
+            $('#lists-error-div').css({"display": "block"});
+            if($('#one-list-error').length == 0){
+                $('#lists-errors').append('<li class="list-group-item" id="one-list-error">Debe seleccionar al menos una lista de verificación.</li>');
+            }
+        }
+        else{
+            $('#lists-error-div').css({"display": "none"});
+            $('#one-list-error').remove();
+        }
+        var revisionValues = [];
+        revision.each(function(){
+            revisionValues.push(parseInt($(this).val()));
+        });
+        revisionValues = revisionValues.sort();
+        var i;
+        for (var i = 0; i < revisionValues.length - 1; i++) {
+            if (revisionValues[i + 1] == revisionValues[i]) {
+                event.preventDefault();
+                $('#lists-error-div').css({"display": "block"});
+                if($('#repeated-list-error').length == 0){
+                    $('#lists-errors').append('<li class="list-group-item" id="repeated-list-error">Los documentos seleccionados no pueden repetirse.</li>');
+                }
+            }
+            else{
+                $('#lists-error-div').css({"display": "none"});
+                $('#repeated-list-error').remove();
+            }
+        }
+
+//        if(i == revisionValues.max_line_len){
+//            $('#lists-error-div').css({"display": "none"});
+//            $('#repeated-list-error').remove();
+//        }
+
+    });
+
+    function checkListCount(){
+        if($('.revisionField').length != 0){
+            verificationListsCount = $('.revisionField').length;
+            toShowCount = verificationListsCount;
+        }
+        else
+            verificationListsCount = 0;
+    }
+
+    function addVerificationList(){
+        checkListCount();
+        var listField = '<div class="field"><label for="document_revisions_attributes_'+verificationListsCount+'_verification_list_id">Lista de Verificacion</label><br><div class="col-xs-10"><select class="form-control revisionField" name="document[revisions_attributes]['+verificationListsCount+'][verification_list_id]" id="document_revisions_attributes_'+verificationListsCount+'_verification_list_id">'+$('#list-options-template').html()+'</select></div><a onclick="deleteVerificationField('+verificationListsCount+')" class="btn btn-danger"><i class="fa fa-times-circle"></i></a><br><br></div>';
+        $('#verification-list-fields').append(listField);
+        verificationListsCount++;
+        toShowCount++;
+        checkListCount();
+        $('#verification-list-count').text(parseInt($('#verification-list-count').text())+1);
+        stabilize();
+    }
+
+    function deleteVerificationField(listField){
+        $('#document_revisions_attributes_'+listField+'_verification_list_id').parent().parent().css('display', 'none');
+        $('#document_revisions_attributes_'+listField+'_verification_list_id :selected').attr('value', '');
+        toShowCount--;
+        checkListCount();
+        $('#verification-list-count').text(parseInt($('#verification-list-count').text())-1);
+    }
+
+    function setDeleteFields(){
+        checkListCount();
+        var deletes = $('.to-fix');
+        deletes.each(function(index){
+            $(this).attr('onclick','deleteVerificationField('+index+')');
+        });
+    }
+
+    setDeleteFields();
+
+    function setDocCountValue(){
+        $('#verification-list-count').text(toShowCount);
+    }
+
+    setDocCountValue();
+
+</script>

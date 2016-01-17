@@ -1,0 +1,66 @@
+<%= form_for(@company) do |f| %>
+  <% if @company.errors.any? %>
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      
+      <div class="panel panel-danger">
+        <div class="panel-heading">Errores al registrar compañia</div>
+          <ul class="list-group">
+            <% @company.errors.full_messages.each do |message| %>
+              <li class='list-group-item'><%= message %></li>
+            <% end %>
+          </ul>
+      </div>
+    </div>
+  <% end %>
+<br>
+
+<div class="row">
+      <div class="col-md-6">
+        <div class="field">
+          <label>Nombre <i class="fa fa-asterisk"></i></label><br>
+          <%= f.text_field :name, :class => 'form-control'%>
+        </div><br>
+        <div class="field">
+          <label>NIT <i class="fa fa-asterisk"></i></label><br>
+          <%= f.text_field :nit, :class => 'form-control' %>
+        </div><br>
+        <div class="field">
+          <label>Actividad principal <i class="fa fa-asterisk"></i></label><br>
+          <%= f.text_field :principal_activity, :class => 'form-control' %>
+        </div><br>
+        <div class="field">
+          <label>Direccion <i class="fa fa-asterisk"></i></label><br>
+          <%= f.text_field :address, :class => 'form-control' %>
+        </div><br>
+      </div>
+      <div class="col-md-6">
+        <div class="field">
+          <label>Zona</label><br>
+          <%= f.text_field :zone, :class => 'form-control' %>
+        </div><br>
+        <div class="field">
+          <label>Departamento <i class="fa fa-asterisk"></i></label><br>
+          <%= f.select :departament, ['Cochabamba','Beni','La Paz','Oruro','Pando','Potosi','Santa Cruz','Sucre','Tarija'] ,{},:class => 'form-control' %>
+        </div><br>
+        <div class="field">
+          <label>Correo electronico</label><br>
+          <%= f.text_field :email, :class => 'form-control' %>
+        </div><br>
+        <div class="field">
+          <label>Telefono <i class="fa fa-asterisk"></i></label><br>
+          <%= f.text_field :phones, :class => 'form-control' %>
+        </div><br>
+      </div><br>
+
+</div>
+
+    <div class="panel panel-info">
+      <div class="panel-heading"> <i class="fa fa-asterisk"></i> Indica campo obligatorio</div>
+    </div>
+
+
+   <div class="row center actions">
+    <%= f.submit 'Registrar', class: 'btn btn-default ' %>
+  </div>
+<% end %>

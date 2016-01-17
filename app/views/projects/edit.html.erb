@@ -1,0 +1,10 @@
+<h1>Editar Proyecto</h1>
+
+<%= render 'form' %>
+
+
+<script>
+    $(document).ready(function(){
+        gmap_form(<%== @project.to_json %>);
+    });
+</script>

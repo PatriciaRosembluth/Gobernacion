@@ -1,0 +1,22 @@
+<%= render :partial => 'static_pages/notice_panel' %>
+
+<h1>Ver Tipo de Trámite</h1>
+<br/>
+<h3><strong>Nombre:</strong> <%= @procedure_type.name %></h3>
+<br/>
+<% if @procedure_type.documents.empty? %>
+    <h4>No hay documentos asociados a este tipo de tramite</h4>
+<% else %>
+    <h4>Documentos Necesarios</h4>
+    <table class="table table-hover cream-pixels">
+        <% @procedure_type.documents.each do |document| %>
+          <tr>
+            <td><%= document.typename %> <br/></td>
+            <td><%= link_to :Ver, document, class:'btn btn-default' %></td>
+          </tr>
+        <% end %>
+    </table>
+<% end %>
+<br/>
+<%= link_to :Editar, edit_procedure_type_path(@procedure_type), class:'btn btn-primary'%>
+<%= link_to :Volver, procedure_types_path, class:'btn btn-default'%>

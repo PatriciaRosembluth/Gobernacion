@@ -1,0 +1,62 @@
+<%= render :partial => 'static_pages/notice_panel' %>
+
+<div class="row">
+  <div class="col-md-7">
+    <h1>Lista de Documentos</h1>
+  </div>
+  <div class="col-md-5">
+    <%= render :partial => 'documents/search' %>
+    <br>
+        <div class="form-inline">
+              <%= form_tag(documents_path, :method => "get", id: "search-form") do %>
+                  <%= text_field_tag :search, params[:search], placeholder: "Nombre de documento", :class => 'form-control'%>
+                  <%= submit_tag 'Buscar', :class=>'btn btn-default' %>
+              <% end %>
+        </div>
+  </div>
+</div>
+    <%if @documents.empty?%>
+        <div class="row center actions">
+          <div class="panel panel-danger">
+            <div class="panel-heading">
+              <% if params[:search] %>
+                  <p>Su busqueda no generó resultados</p>
+              <%else%>
+                  <p>No existen Documentos registrados en este momento</p>
+              <%end%>
+            </div>
+          </div>
+        </div>
+    <% else %>
+    <div class="col-md-6 col-md-offset-3">
+      <div class="digg_pagination">
+        <%= will_paginate @documents,  :previous_label => 'Atras', :next_label => 'Siguiente', :container => true ,renderer: BootstrapPagination::Rails%>
+      </div>
+    </div><br>
+        <table class="table table-stripped table-hover">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th># Listas</th>
+              <th colspan="3"></th>
+            </tr>
+          </thead>
+          <tbody class="cream-pixels">
+            <% @documents.each do |document| %>
+              <tr>
+                <td><%= document.typename %></td>
+                <td><%= document.verification_lists.count %> </td>
+                <td><%= link_to 'Ver', document , class:'btn btn-default'%></td>
+                <td><%= link_to 'Editar', edit_document_path(document) , class:'btn btn-primary'%></td>
+                <td><%= link_to 'Eliminar', document, method: :delete, data: { confirm: 'Esta seguro?' } , class:'btn btn-danger'%></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <div class="col-md-6 col-md-offset-3">
+          <div class="digg_pagination">
+            <%= will_paginate @documents,  :previous_label => 'Atras', :next_label => 'Siguiente', :container => true ,renderer: BootstrapPagination::Rails%>
+          </div>
+        </div><br>
+    <%end%>
+    <br>

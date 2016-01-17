@@ -1,0 +1,72 @@
+<p id="notice"><%= notice %></p>
+    <h1>Llenar lista de verificacion</h1>
+
+
+<br/>
+<%= form_for(@verified_list) do |f| %>
+
+<div class="jumbotron">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="text-center">
+          <h3>Proyecto: <%=@verified_list.received_document.procedure.project.name%></h3>
+          <h4>Compania: <%=@verified_list.received_document.procedure.project.company.name%></h4>
+        </div>
+        <br/>
+        <h4>Documento: <%= @verified_list.received_document.document.typename %></h4>
+        <h4>Lista: <%=@verified_list.verification_list.name%></h4>
+      </div>
+    </div>
+  <br/>
+
+  <table class="table table-striped table-hover">
+    <thead>
+        <tr>
+          <th>Descripcion de campo</th>
+          <th>SI</th>
+          <th>NO</th>
+          <th>Observacion</th>
+        </tr>
+    </thead>
+      <tbody class="cream-pixels">
+          <%= f.fields_for :verified_fields do |verified_field| %>
+            <tr>
+                <td><%= verified_field.object.verification_field.description %></td>
+                <td><%= verified_field.radio_button :answer ,true %></td>
+                <td><%= verified_field.radio_button :answer ,false %></td>
+                <td><%= verified_field.text_field :description, class:'form-control'%></td>
+            </tr>
+          <% end %>
+      </tbody>
+  </table>
+
+  <br>
+
+  <div id="documents-reception-error-panel" class="container" style="display:none">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div class="panel panel-danger" >
+        <div class="panel-heading">No puede dejar en blanco los identificadores de documentos.</div>
+      </div>
+    </div>
+    <div class="col-md-3"></div>
+  </div>
+
+  <br/>
+
+<div class="row">
+    <div class="col-xs-3 col-sm-3  "></div>
+  <% if @verified_list.received_document.procedure.state == 2 %>
+  <div class="col-xs-3 col-sm-3  ">
+      <%=f.submit 'Guardar Lista', {class:'btn btn-default', id:'reception-submit-button'}%>
+   </div>   
+  <%else %>
+    <h4>Esta lista verificada ya no puede editarse</h4>
+  <%end%>
+
+   <div class="col-xs-3 col-sm-3  ">
+     <%= link_to 'Volver a Tramite', '/procedures/'+@verified_list.received_document.procedure_id.to_s, class:'btn btn-primary' %>
+    </div>
+  </div>
+ </div>
+<% end %>

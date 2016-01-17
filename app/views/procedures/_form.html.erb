@@ -1,0 +1,73 @@
+<%= form_tag :procedures, method: 'post' do %>
+    <%= hidden_field_tag 'procedure[procedure_type_id]', params[:procedure_type_id] %>
+    <%= hidden_field_tag 'procedure[project_id]', params[:project_id] %>
+
+<div class="row">
+  <div class="col-md-4">
+    <h3>Proyecto: <%= @project.name %></h3>
+    <h4>Tipo de Trámite: <%= @procedure_type.name %></h4>
+  </div>
+  <div class="col-md-8">
+    <div class="panel panel-info">
+      <div class="panel-heading">Seleccione el Representante Legal</div>
+      <ul class="list-group">
+        <%@legal_agents.each do |legal_agent| %>
+            <div class="radio">
+              <li class="list-group-item">
+                <label>
+                  <%= radio_button :procedure, :legal_agent_id ,legal_agent.id, {checked:true}%>
+                  <%= legal_agent.person.last_name%> <%= legal_agent.person.first_name%>
+                </label>
+              </li>
+            </div><!-- /input-group -->
+        <%end%>
+      </ul>
+    </div>
+  </div>
+</div>
+<br/>
+
+<div class="row" id="doc-error" style="display: none">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <div class="panel panel-danger">
+      <div class="panel-heading"> <p id="error-message"></p> </div>
+    </div>
+  </div>
+</div>
+
+<table class="table table-hovers">
+    <thead>
+      <tr>
+        <th>Documento</th>
+        <th>Referencia</th>
+      </tr>
+    </thead>
+
+      <tbody class="cream-pixels">
+        <% @reception_documents.each do |document| %>
+            <tr>
+              <td><%= document.typename %></td>
+              <td><%= text_field_tag document.typename ,'', class:'form-control document-reception'%></td>
+            </tr>
+        <%end%>
+      </tbody>
+      <tr>
+        <td colspan="2"><center><%= submit_tag :Registrar , class:'btn btn-default', id: 'start-procedure' %></center></td>
+      </tr>
+  <%end%>
+</table>
+
+<script>
+  $('#start-procedure').on('click', function(event) {
+    var references = $('.document-reception');
+    for(var i = 0; i < references.length; i++){
+      if (references[i].value == ""){
+        event.preventDefault();
+        $('#doc-error').css({ display:'block' });
+        $('#error-message').text('Debe llenar todos los campos de referencia para poder iniciar el tramite.');
+        break;
+      }
+    }
+  });
+</script>

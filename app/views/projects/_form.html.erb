@@ -1,0 +1,92 @@
+<%= form_for(@project) do |f| %>
+  <% if @project.errors.any? %>
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
+
+        <div class="panel panel-danger">
+          <div class="panel-heading">Errores al registrar proyecto</div>
+          <ul class="list-group">
+            <% @project.errors.full_messages.each do |message| %>
+                <li class='list-group-item'><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+  <% end %>
+  <br>
+
+    <% if @companies.length == 0 %>
+        <div class="row center actions">
+          <div class="panel panel-danger">
+            <div class="panel-heading">
+              Para registrar un Proyecto se necesita una Compañia registrada con por lo menos un Representante Legal asociado.
+              <br/>
+              Registra una compañia <%= link_to :aquí, new_company_path %>
+              <br/>
+              Registra Representantes legales <%= link_to :aquí , companies_path %>
+            </div>
+          </div>
+        </div>
+    <% else %>
+        <div class="row">
+          <div class="col-md-6">
+
+            <div class="row">
+              <div class="col-md-8" style="padding-left: 0">
+                <label>Compañia <i class="fa fa-asterisk"></i></label><br>
+                <i>(Compañias con por lo menos un R.L.)</i>
+                <br>
+                <%= f.select :company_id, @companies, {}, {:class => 'form-control form-inline'} %>
+              </div>
+              <div class="col-md-4">
+                <br/>
+                <label>Nueva compañia </label>
+                <%= link_to 'Registrar Compañia', new_company_path, class: 'btn btn-success' %>
+              </div><br><br>
+            </div>
+            <br/>
+            <div class="field">
+              <label>Nombre <i class="fa fa-asterisk"></i></label><br>
+              <%= f.text_field :name, :class => 'form-control' %>
+            </div><br>
+
+            <div class="field">
+              <label>Descripción <i class="fa fa-asterisk"></i></label><br>
+              <%= f.text_area :description, :class => 'form-control small-text-area'  %>
+            </div><br>
+
+            <div class="field">
+              <label>Dirección <i class="fa fa-asterisk"></i></label><br>
+              <%= f.text_field :address, :class => 'form-control' %>
+            </div><br>
+
+            <div class="field">
+              <label>Zona <i class="fa fa-asterisk"></i></label><br>
+              <%= f.text_field :zone, :class => 'form-control'  %>
+            </div><br>
+
+          </div>
+
+          <div class="col-md-6">
+            <div class="panel panel-info">
+              <div class="panel-heading">Para seleccionar la ubicacion del proyecto haga click en el mapa.</div>
+            </div>
+            <div id="map" style="width: 100%; height: 330px;"></div>
+            <%= f.hidden_field :latitude, id: 'map_lat' %>
+            <%= f.hidden_field :longitude, id: 'map_lng' %>
+
+          </div><br>
+        </div>
+
+        <div class="col-md-12">
+          <div class="panel panel-info">
+            <div class="panel-heading">(<i class="fa fa-asterisk"></i>) Campos requeridos</div>
+          </div>
+        </div>
+
+        <div class="actions center">
+          <%= f.submit 'Registrar', :class => 'btn btn-default' %>
+        </div>
+    <% end %>
+
+<% end %>

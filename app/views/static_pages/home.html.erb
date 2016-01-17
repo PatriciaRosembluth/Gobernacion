@@ -1,0 +1,50 @@
+<% if !user_signed_in? %>
+<!DOCTYPE>
+    <html>
+    <head>
+      <title>Sistema de Seguimiento de tramites</title>
+      <%= stylesheet_link_tag    'application', media: 'all' %>
+      <%= javascript_include_tag 'application' %>
+      <%= csrf_meta_tags %>
+      <%= favicon_link_tag('icons/escudo-cochabamba.ico') %>
+
+      <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    </head>
+    <body class="fondo-cocha">
+    <h1 class="center home-title" id="homeTitle"> Sistema de seguimiento de tramites y revision de documentos </h1>
+    <div class="login-box col-md-6 col-md-offset-3">
+
+      <div class="login-box-body" style="border-radius: 7px; overflow: hidden">
+        <h2>GOBERNACIÓN DE COCHABAMBA</h2>
+        El Gobernador del Departamento en el ejercicio de sus atribuciones y competencias, electo por voto universal y directo, armonizará las políticas del  Departamento con las políticas nacionales y optimizará los mecanismos operativos de la Gobernación, con la finalidad de mejorar la eficacia y eficiencia de la provisión de bienes y servicios a la sociedad.
+        Formular políticas y estrategias orientadas a asegurar una gestión pública Institucional eficiente y transparente, promoviendo el desarrollo del Departamento a través de la ejecución de planes, programas y proyectos.
+        Ejercer las atribuciones y funciones que asigna la Constitución política del estado, la Ley Marco de Autonomías y las disposiciones del ordenamiento jurídico vigentes que le sean aplicables.
+        <div class="center">
+          <br>
+          <br>
+          <a href="http://www.gobernaciondecochabamba.bo/" class="btn btn-default btn-flat btn-bitbucket">Mas información</a>
+          <a href="/users/sign_in" class="btn btn-success btn-flat">Iniciar Sesión</a>
+        </div>
+      </div>
+      <!-- /.login-box-body -->
+    </div>
+    </body>
+    </html>
+<% else %>
+    <div class="col-md-12">
+      <h1 class="center" id="homeTitle"> Sistema de seguimiento de tramites y revision de documentos </h1>
+      <%if notice!=nil%>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="panel panel-success">
+                <div class="panel-heading">
+                  <i class="fa fa-info-circle"></i>
+                  <%= notice %>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6"></div>
+          </div>
+      <%end%>
+    </div>
+<% end %>

@@ -1,0 +1,146 @@
+<%= form_for(@procedure_type) do |f| %>
+    <% if @procedure_type.errors.any? %>
+        <div class="col-md-3"></div>
+        <div class="col-md-6" id="procedure-name-error-div">
+          <div class="panel panel-danger">
+            <div class="panel-heading">Errores al registrar tipo de tramite</div>
+            <ul class="list-group">
+              <% @procedure_type.errors.full_messages.each do |message| %>
+                  <li class="list-group-item"><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-3"></div>
+    <% end %>
+
+    <div class="col-md-4">
+          <br>
+            <%= f.label :nombre %> <i class="fa fa-asterisk"></i><br>
+            <%= f.text_field :name, class: 'form-control' %>
+          <br>
+
+          <div class="actions">
+            <%= f.submit 'Registrar', class: 'btn btn-default', id:'procedure-type-submit-button' %>
+          </div>
+    </div>
+
+    <div class="col-md-8">
+      <h2>Documentos necesarios para iniciar el tipo de tramite.</h2>
+
+      <div class="col-md-12" id="doc-error-div" style="display: none">
+        <div class="panel panel-danger">
+          <div class="panel-heading">Errores al agregar documentos</div>
+          <ul class="list-group" id="document-errors">
+          </ul>
+        </div>
+      </div>
+
+      <div class="field" id="document-options-template" style="display: none ;">
+        <% Document.all.each do |doc| %>
+            <option value="<%= doc.id %>"><%= doc.typename %></option>
+        <% end %>
+      </div>
+
+
+      <div class="col-xs-8">
+        <div class="col-md-offset-1 row" id="document-fields">
+          <label >Existe(n) <label id="document-count" ><%= if @count then @count else '0' end %></label> documento(s) de verificación en total</label>
+          <%= f.fields_for :requirements do |builder| %>
+              <%= render 'requirement_field', :f => builder %>
+          <% end %>
+        </div><br>
+      </div>
+
+      <div class="col-xs-8 field">
+        <a class="btn btn-success" onclick="addDocumentField()"> Agregar Documento</a>
+      </div>
+    </div>
+
+<% end %>
+
+<script>
+    var documentCount = 0;
+    var toShowCount = $('.requirementField').length;
+
+    $('#procedure-type-submit-button').on('click', function(event){
+        var requirements = $('.requirementField :selected').filter(function() { return $(this).parent().parent().parent().css("display") != "none" });
+
+        if(requirements.length == 0){
+            event.preventDefault();
+            $('#doc-error-div').css({"display": "block"});
+            if($('#one-doc-error').length == 0){
+                $('#document-errors').append('<li class="list-group-item" id="one-doc-error">Debe seleccionar al menos un documento.</li>');
+            }
+        }
+        else{
+            $('#doc-error-div').css({"display": "none"});
+            $('#one-doc-error').remove();
+        }
+        var requirementsValues = [];
+        requirements.each(function(){
+            requirementsValues.push(parseInt($(this).val()));
+        });
+        requirementsValues = requirementsValues.sort();
+        var i;
+        for (i = 0; i < requirementsValues.length - 1; i++) {
+            if (requirementsValues[i + 1] == requirementsValues[i]) {
+                event.preventDefault();
+                $('#doc-error-div').css({"display": "block"});
+                if($('#repeated-doc-error').length == 0){
+                    $('#document-errors').append('<li class="list-group-item" id="repeated-doc-error">Los documentos seleccionados no pueden repetirse.</li>');
+                }
+            }
+        }
+//        console.log(i, requirementsValues.length);
+//        console.log(i, requirementsValues.max_line_len);
+//        if(i == requirementsValues.max_line_len){
+//            $('#doc-error-div').css({"display": "none"});
+//            $('#repeated-doc-error').remove();
+//        }
+
+    });
+
+    function checkDocumentCount(){
+        if($('.requirementField').length != 0){
+            documentCount = $('.requirementField').length;
+        }
+        else
+            documentCount = 0;
+    }
+
+    function addDocumentField(){
+        checkDocumentCount();
+        var documentField = '<div class="field"><label for="procedure_type_requirements_attributes_'+documentCount+'_Documentos_necesarios">Documentos necesarios</label><div class="col-xs-9"> <select class="form-control requirementField" name="procedure_type[requirements_attributes]['+documentCount+'][document_id]" id="procedure_type_requirements_attributes_'+documentCount+'_document_id">'+$('#document-options-template').html()+'</select></div><div class="col-xs-1"><a onclick="deleteDocument('+documentCount+')" class="btn btn-danger"><i class="fa fa-times-circle"></i></a></div><br><br></div>';
+        $('#document-fields').append(documentField);
+        documentCount++;
+        toShowCount++;
+        checkDocumentCount();
+        $('#document-count').text(parseInt($('#document-count').text())+1);
+        stabilize();
+    }
+
+    function deleteDocument(documentField){
+        $('#procedure_type_requirements_attributes_'+documentField+'_document_id').parent().parent().css('display', 'none');
+        $('#procedure_type_requirements_attributes_'+documentField+'_document_id :selected').attr('value', '');
+        toShowCount--;
+        checkDocumentCount();
+        $('#document-count').text(parseInt($('#document-count').text())-1);
+    }
+
+    function setDeleteFields(){
+        checkDocumentCount();
+        var deletes = $('.to-fix');
+        deletes.each(function(index){
+            $(this).attr('onclick','deleteDocument('+index+')');
+        });
+    }
+    setDeleteFields();
+
+    function setDocCountValue(){
+        $('#document-count').text(toShowCount);
+    }
+
+    setDocCountValue();
+
+</script>

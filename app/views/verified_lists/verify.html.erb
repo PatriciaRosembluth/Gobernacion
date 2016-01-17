@@ -1,0 +1,62 @@
+<h2>Verificar</h2>
+<br><br>
+
+
+<%= form_for(@verified_list) do |f| %>
+    <% if @verified_list.errors.any? %>
+        <div id="error_explanation">
+          <h2>Errores al crear lista de verificacion</h2>
+
+          <ul>
+            <% @verified_list.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <div class="row col-md-6">
+      <p>
+        <strong>Lista de verificacion:</strong>
+        <%= @verified_list.verification_list.name %>
+      </p>
+
+      <p>
+        <strong>Empleado:</strong>
+        <%= @verified_list.employee %>
+      </p>
+
+      <p>
+        <strong>Fecha de verificacion:</strong>
+        <%= @verified_list.date_of_verification.strftime("%d/%m/%Y") %>
+      </p>
+
+      <div class="fields col-md-">
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th>Descripcion</th>
+            <th>Cumple</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @verified_list.verification_list.verification_fields.each do |field| %>
+              <tr>
+                <td><%= field.description %></td>
+                <td><%= fields_for :verified_field do |asd| %>
+                      <%= asd.check_box :answer %>
+                  <% end %></td>
+              </tr>
+          <% end %>
+          </tbody>
+        </table>
+
+      </div>
+
+      <div class="actions">
+        <%= f.submit 'Aceptar', class: 'btn btn-default' %>
+      </div>
+    </div>
+
+<% end %>

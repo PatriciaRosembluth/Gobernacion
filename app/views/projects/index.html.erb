@@ -1,0 +1,66 @@
+<%= render :partial => 'static_pages/notice_panel' %>
+
+
+<div class="row">
+  <div class="col-md-7">
+    <h1>Buscar Proyecto </h1>
+    <br>
+  </div>
+  <div class="col-md-5">
+    <%= render :partial => 'companies/search' %>
+    <div class="form-inline">
+      <br>
+      <%= form_tag(projects_path, :method => 'get', id: 'search-form') do %>
+          <%= text_field_tag :search, params[:search], placeholder: 'Nombre de proyecto', class: 'form-control' %>
+          <%= submit_tag 'Buscar', class: 'btn btn-default' %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<%if not @projects.present? %>
+
+    <div class="row center actions panel panel-danger">
+      <div class="panel-heading">
+        <% if params[:search] %>
+            <p>Su busqueda no generó resultados</p>
+        <%else%>
+            <p>No existen Proyectos registrados este momento</p>
+        <%end%>
+      </div>
+    </div>
+<%else%>
+
+    <h1>Lista de proyectos</h1><br/>
+
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>Compañia</th>
+      <th>Nombre</th>
+      <th>Zona</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody class="cream-pixels">
+    <% @projects.each do |project| %>
+      <tr>
+        <td><%= project.company.name %></td>
+        <td><%= project.name %></td>
+        <td><%= project.zone %></td>
+        <td><%= link_to 'Ver', project, class: 'btn btn-default' %></td>
+        <% if current_user.role == 1 || current_user.role == 2 %>
+            <td><%= link_to 'Editar', edit_project_path(project) , class:'btn btn-primary'%></td>
+            <td><%= link_to 'Eliminar', project, method: :delete, data: { confirm: 'Esta seguro?' }, class: 'btn btn-danger' %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+<%end%>
+
+<br>
+
+<!--<%= link_to 'New Project', new_project_path %>-->

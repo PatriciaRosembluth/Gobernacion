@@ -1,0 +1,56 @@
+<%= render :partial => 'static_pages/notice_panel' %>
+
+<h2>Ver Proyecto</h2>
+  <br>
+<div class="jumbotron">
+  <table class="table">
+      <tr>
+        <td><strong>Nombre</strong></td>
+        <td><%= @project.name %></td>
+
+        <td><strong>Descripcion</strong></td>
+        <td><%= @project.description %></td>
+      </tr>
+
+      <tr>
+        <td><strong>Direccion</strong></td>
+        <td><%= @project.address %></td>
+
+        <td><strong>Zona</strong></td>
+        <td><%= @project.zone %></td>
+      </tr>
+      <tr>
+        <td><strong>Compañia</strong></td>
+        <td><%= @project.company.name %></td>
+        <td></td>
+        <td></td>
+      </tr>
+  </table>
+  <hr>
+  <div style="padding-left:15px;">
+    <strong>Ubicacion:</strong>
+    <div id="map" style="width: 100%; height: 250px;"></div>
+  </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        gmap_show(<%== @project.to_json %>);
+    });
+</script>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-3  "></div>
+    <% if current_user.role==1 || current_user.role==2 %> 
+      <div class="col-xs-6 col-sm-3 ">
+            <%= link_to 'Editar', edit_project_path(@project), class: 'btn btn-primary' %> 
+      </div>  
+         <div class="col-xs-6 col-sm-3  ">
+        <%= link_to 'iniciar tramite', procedures_begin_path ,class: 'btn btn-info'%>
+      </div> 
+  
+<% end %>
+   <div class="col-xs-6 col-sm-3  ">
+    <%= link_to 'Atras', projects_path, class: 'btn btn-default' %>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+<div class="field">
+  <%= f.label :verification_list_id, 'Lista de Verificacion' %><br>
+  <div class="col-xs-10">
+    <%= f.select :verification_list_id, options_from_collection_for_select(VerificationList.all, :id, :name, f.object.verification_list_id) ,{} ,class: 'form-control revisionField' %>
+  </div>
+  <a class="btn btn-danger to-fix"><i class="fa fa-times-circle"></i></a>
+  <br><br>
+</div>

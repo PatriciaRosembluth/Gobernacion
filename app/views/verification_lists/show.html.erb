@@ -1,0 +1,27 @@
+<%= render :partial => 'static_pages/notice_panel' %>
+
+<div class="jumbotron">
+
+  <p>
+    <strong>Nombre:</strong>
+    <%= @verification_list.name %>
+  </p>
+  <hr>
+  <!--<p>-->
+    <!--<strong>Categoria: </strong>-->
+    <!--<%#= @verification_list.list_category.name %>-->
+  <!--</p>-->
+  <p>
+    <strong>Campos de verificación:</strong>
+    <% @verification_list.verification_fields.each do |field|%>
+      <div class="row col-md-offset-1">
+        <label>Descripcion:</label>
+        <%= field.description %>
+      </div>
+  <% end %>
+  </p>
+
+</div>
+
+<%= link_to 'Editar', edit_verification_list_path(@verification_list), class: 'btn btn-primary' %>
+<%= link_to 'Atras', verification_lists_path, class: 'btn btn-default' %>

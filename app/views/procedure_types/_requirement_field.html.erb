@@ -1,0 +1,10 @@
+<div class="field">
+  <%= f.label :Documentos_necesarios %>
+  <div class="col-xs-9">
+    <%= f.select :document_id, options_from_collection_for_select(@documents, :id, :typename, f.object.document_id) ,{}, class:'form-control requirementField'%>
+  </div>
+  <div class="col-xs-1">
+    <a class="btn btn-danger to-fix"><i class="fa fa-times-circle"></i></a>
+  </div>
+  <br><br>
+</div>

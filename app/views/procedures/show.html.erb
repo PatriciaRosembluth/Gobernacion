@@ -1,0 +1,176 @@
+<%= render :partial => 'static_pages/notice_panel' %>
+
+<h1>Ver Tramite</h1>
+<br/>
+<div class="row">
+  <div class="col-md-6">
+    <%= link_to 'Volver', procedures_path , class:'btn btn-default'%>
+  </div>
+  <div class="col-md-6">
+    <%if current_user.role ==4 or current_user.role == 1#JEFE(4) #ADMIN(1) %>
+        <%if @procedure.state==1 %>
+            <%= link_to 'Asignar revisor', '/procedures/assign' , class:'btn btn-warning'%>
+        <%end%>
+        <%if @procedure.state==3 #Initial, revision and revised %>
+            <%= form_tag '/procedures/'+@procedure.id.to_s+'/finish' do%>
+                <%= submit_tag 'Finalizar Tramite' ,:class=>'btn btn-warning'%>
+                <br/><br>
+                <%= label_tag 'Aceptado' %>
+                <%= radio_button_tag :finished, :yes , true%>
+                <%= label_tag 'Rechazado' %>
+                <%= radio_button_tag :finished, :no %>
+            <%end%>
+        <%end%>
+    <%end%>
+
+    <%if current_user.role == 5 or current_user.role == 1 #REVISOR(5) o Admin(1)%>
+        <%if @procedure.state==2 && @procedure.can_be_sent_to_chief? %>
+            <%= form_tag '/procedures/'+@procedure.id.to_s+'/send' do%>
+                <%= submit_tag 'Enviar tramite a Jefe' ,:class=>'btn btn-warning'%>
+            <%end%>
+        <%end%>
+    <%end%>
+  </div>
+</div>
+
+<br/>
+<div class="jumbotron">
+    <center><h3><strong>Tipo de Trámite</strong> <%= @procedure.procedure_type.name%></h3></center>
+    <center><h3><strong>Proyecto</strong> <%=@procedure.project.name%></h3></center>
+    <center><h4><strong>Compañia</strong> <%=@procedure.project.company.name%></h4></center>
+    <center>
+      <%if @procedure.state == 1 %>
+          <h4><span class="label label-info">Inicial</span></h4>
+      <%elsif @procedure.state == 2 %>
+          <h4><span class="label label-warning">En revision</span></h4>
+      <%elsif @procedure.state == 3 %>
+          <h4><span class="label label-primary">Revisado</span></h4>
+      <%elsif @procedure.state == 4 %>
+          <h4><span class="label label-success">Aceptado</span></h4>
+      <%else%>
+          <h4><span class="label label-danger">Rechazado</span></h4>
+      <%end%>
+    </center>
+  <br/>
+  <table class="table">
+    <tr>
+      <td><strong>Representante Legal</strong></td>
+      <td><%= @procedure.legal_agent.person.first_name %>&nbsp; <%= @procedure.legal_agent.person.last_name %>     </td>
+      <td><strong>Revisor</strong></td>
+      <td>
+        <%if @procedure.user %>
+            <%= @procedure.user.person.first_name %>
+            <%= @procedure.user.person.last_name %>
+        <%else%>
+            Ningun revisor fue asignado a este tramite todavia
+        <%end%>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Fecha de inicio</strong></td>
+      <td><%= @procedure.start_date.strftime('%d/%m/%Y') %></td>
+      <td><strong>Fecha de conclusion</strong></td>
+      <td>
+        <%if @procedure.end_date %>
+            <%= @procedure.end_date.strftime('%d/%m/%Y') %>
+        <%else%>
+            Este tramite todavia no ha acabado
+        <%end%>
+      </td>
+    </tr>
+  </table>
+  <br/>
+  <hr/>
+  <div class="text-center">
+      <h3>Documentos Recibidos</h3>
+  </div>
+  <br/>
+  <table class="table">
+    <tr>
+        <th>Documento</th>
+        <th>Referencia</th>
+    </tr>
+    <% @procedure.received_documents.each do |received_document| %>
+        <tr>
+          <td><i class="fa fa-file-text"></i> &nbsp; <%= received_document.document.typename%></td>
+          <td><%= received_document.reference %></td>
+        </tr>
+    <% end%>
+  </table>
+  <br/>
+    <%if @procedure.state>1 %>
+      <hr/>
+      <div class="text-center"><h3>Revisión</h3></div>
+        <div class="row">
+          <div class="col-lg-8">
+                <h3>Listas de verificaciones</h3>
+                <%if @procedure.state==2 and ((current_user.role==5 and current_user==@procedure.user) or current_user.role==1)#Revisor View%>
+                    <h5>Todas las listas deben ser llenadas</h5>
+                    <table class="table">
+                         <% @procedure.received_documents.each do |received_document| %>
+                            <tr>
+                              <td rowspan=<%=received_document.verified_lists.count%>>
+                                <%= received_document.document.typename %>
+                              </td>
+                                <% received_document.verified_lists.each do |verified_list| %>
+                                    <% if verified_list!=received_document.verified_lists.first then %>
+                                        <tr>
+                                      <%end%>
+                                      <div class="form-inline">
+                                        <td>
+                                              <%= verified_list.verification_list.name %>
+                                        </td>
+                                        <td>
+                                          <% if verified_list.verified %>
+                                              <%= link_to :Editar, edit_verified_list_path(verified_list) ,class:'btn btn-primary'%>
+                                          <%else%>
+                                              <%= link_to :Revisar, edit_verified_list_path(verified_list) ,class:'btn btn-info'%>
+                                          <%end%>
+                                        </td>
+                                      </div>
+                                <%end%>
+                        <%end%>
+                    </table>
+                <%end%>
+
+                <%if @procedure.state>=3 #has already a revisor assigned %>
+                <table class="table">
+                  <% @procedure.received_documents.each do |received_document| %>
+                      <tr>
+                        <td rowspan=<%=received_document.verified_lists.count%>>
+                          <%= received_document.document.typename %>
+                        </td>
+                        <% received_document.verified_lists.each do |verified_list| %>
+                            <% if verified_list!=received_document.verified_lists.first then %>
+                              <tr>
+                          <%end%>
+                            <td><%= verified_list.verification_list.name %></td>
+                            <td><%= link_to :Ver, verified_list,class:'btn btn-default' %> </td>
+                          </tr>
+                      <%end%>
+
+                  <%end%>
+                </table>
+                <%end%>
+          </div>
+
+          <div class="col-lg-4">
+            <h3>Informe</h3>
+                <% if @procedure.state == 2%>
+                    <% if (current_user.role == 5 and current_user==@procedure.user) or current_user.role==1 %>
+                        <% if @procedure.report %>
+                            <h4>Edite el informe <%= link_to 'aqui', edit_report_path(@procedure.report) %></h4>
+                        <%else%>
+                            <%= link_to 'Registrar Informe', '/reports/new/'+@procedure.id.to_s , class:'btn btn-info'%>
+                        <%end%>
+                    <%end%>
+                <%else%>
+                    <h4>Vea el informe <%= link_to 'aqui', @procedure.report %></h4>
+                <% end %>
+          </div>
+        </div>
+    <% end %>
+
+</div>
+
+<br/><br/>

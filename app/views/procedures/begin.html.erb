@@ -1,0 +1,49 @@
+<h1>Iniciar Trámite</h1>
+<br/>
+<% if not @projects.any? or not @procedure_types.any? %>
+    <div class="row center actions">
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          <% if not @projects.any? %>
+              <% if not @procedure_types.any? %>
+                <p>En este momento no hay proyectos ni tipos de tramites disponibles para iniciar un tramite</p>
+              <%else%>
+                <p>En este momento no hay proyectos disponibles para iniciar un tramite</p>
+              <%end%>
+          <%else%>
+              <p>En este momento no hay tipos de tramites disponibles para iniciar un tramite</p>
+          <%end%>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 col-md-offset-4">
+      <%= link_to 'Registrar proyecto', new_project_path ,class: 'btn btn-primary'%>
+    </div>  
+<%else%>
+    <%= form_tag '/procedures/new', method: 'post' do %>
+        <div class="col-lg-6"><br>
+          <div class="panel panel-info">
+            <div class="panel-heading">Elija el proyecto</div>
+            <ul class="list-group">
+              <%@projects.each do |project| %>
+                  <div class="radio">
+                    <li class="list-group-item">
+                      <label>
+                        <%= radio_button_tag 'project_id' ,project.id, true%>
+                        <%= project.company.name%> >> <%=project.name%>
+                      </label>
+                    </li>
+                  </div><!-- /input-group -->
+              <%end%>
+            </ul>
+          </div>
+          <br/>
+        </div>
+        <div class="col-lg-5"><br/>
+          <h4>Tipo de tramite</h4>
+          <%= select_tag :procedure_type_id, options_from_collection_for_select(@procedure_types , 'id', 'name'), class:'form-control'%>
+          <br/>
+          <center><%= submit_tag :Iniciar, :class=>'btn btn-default'%></center>
+        </div>
+    <% end %>
+<%end%>

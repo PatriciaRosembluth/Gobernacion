@@ -1,0 +1,43 @@
+<%= render :partial => 'static_pages/notice_panel' %>
+
+<h1>Ver Reporte</h1>
+
+  <div class='jumbotron'>
+    <table class="table">
+        <tr><strong>Motivo</strong></tr>
+        <tr>
+            <p class="wrap"><%= @report.title %>
+        </p>
+        </tr>
+        <tr><strong>Antecedentes</strong></tr>
+        <tr>
+            <p class="wrap"><%= @report.antecedent %>
+        </p>
+        </tr>
+        <tr><strong>Marco Normartivo</strong></tr>
+        <tr>
+            <p class="wrap">  <%= @report.regulatory_framework %>
+        </p>
+        </tr>
+        <tr><strong>Descripción </strong></tr>
+        <tr>
+            <p class="wrap"><%= @report.description %>
+        </p>
+        </tr>
+        <tr><strong>Conclusiones</strong></tr>
+        <tr>
+            <p class="wrap"><%= @report.conclusion %>
+        </p>
+        </tr>
+        <tr><strong>Recomendaciones</strong></tr>
+        <tr>
+            <p class="wrap">  <%= @report.recommendation %>
+        </p>
+        </tr>
+    </table>
+
+    </div>
+<%= link_to 'Editar',edit_report_path(@report), :class=>'btn btn-primary' %>
+<%= link_to 'Ir a Tramite', @report.procedure , :class=>'btn btn-default' %>
+
+<br><br>

@@ -1,0 +1,60 @@
+<%= render :partial => 'static_pages/notice_panel' %>
+
+<% if @reports.present?%>
+<div class="row">
+  <div class="col-md-7">
+
+
+<h1>Buscar informe</h1>
+<br>
+</div>
+<div class="col-md-5">
+    <%= render :partial => 'reports/search' %>
+    <div class="form-inline">
+      <br>
+      <%= form_tag(reports_path, :method => "get", id: "search-form") do %>
+        <%= text_field_tag :search, params[:search], placeholder: "Titulo de reporte", :class => 'form-control'%>
+      <%= submit_tag 'Buscar', :class=>'btn btn-default' %>
+    </div>
+  <% end %>
+</div>
+</div>
+<h1>Lista de  informe</h1><br/>
+<h4>Haga click en el motivo del informe  para ver detalles</h4>
+
+<table  class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>MOTIIVO</th>
+    <!--  <th>Antecedentes</th>-->
+      <th>DESCRIPCIONES</th>
+    <!--  <th>Conclusiones</th>
+      <th>Recomendaciones</th>-->
+
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @reports.each do |report| %>
+      <tr>
+        <td><%=link_to  report.title , report %></td>
+        <td><%= report.description %></td>
+        <td><%= link_to 'Ver', report, class: 'btn btn-default' %></td>
+        <td><%= link_to 'Editar', edit_report_path(report), class: 'btn btn-primary'  %></td>
+        <td><%= link_to 'Eliminar', report, method: :delete, data: { confirm:'¿Esta seguro de eliminar el informe ?'  }, class: 'btn btn-danger'  %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+<br>
+<%else%>
+  <% if params[:search] %>
+    <h4>Su busqueda no generó resultados</h4>
+  <%else%>
+    <h4>No existen informes registrados este momento</h4>
+  <%end%>
+<%end%>
+<br>

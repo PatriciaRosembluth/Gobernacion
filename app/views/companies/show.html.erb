@@ -1,0 +1,79 @@
+<%= render :partial => 'static_pages/notice_panel' %>
+
+<h1>Ver Compañia</h1>
+  <br>
+<%= link_to 'Editar', edit_company_path(@company), :class=>'btn btn-primary' %>
+
+<br/><br/>
+
+<div class='jumbotron'>
+  <h3>Informacion de Compania</h3><br/>
+  <table class='table'>
+    <tr>
+      <td> <strong>Nombre</strong> </td>
+      <td> <%= @company.name %> </td>
+
+      <td> <strong>Actividad principal</strong> </td>
+      <td> <%= @company.principal_activity %> </td>
+    </tr>
+    <tr>
+      <td> <strong>NIT</strong> </td>
+      <td> <%= @company.nit %> </td>
+
+      <td> <strong>Direccion</strong> </td>
+      <td> <%= @company.address %> </td>
+    </tr>
+
+    <tr>
+      <td> <strong>Zona</strong> </td>
+      <td> <%= @company.zone %> </td>
+
+      <td> <strong>Correo electronico</strong> </td>
+      <td> <%= @company.email%> </td>
+    </tr>
+    <tr>
+      <td> <strong>Departamento</strong> </td>
+      <td> <%= @company.departament %> </td>
+
+      <td> <strong>Telefono</strong> </td>
+      <td> <%= @company.phones %> </td>
+    </tr>
+
+  </table>
+
+  <br/>
+
+  <% if @company.legal_agents.any? %>
+      <h3>Representantes Legales asociados</h3><br/>
+      <table class="table">
+        <tr>
+          <th>Apellido(s)</th>
+          <th>Nombre(s)</th>
+          <th>E-mail</th>
+          <th>C.I.</th>
+          <th></th>
+        </tr>
+        <%@company.legal_agents.each do |legal_agent|%>
+            <tr>
+              <td><%=legal_agent.person.last_name %></td>
+              <td><%=legal_agent.person.first_name %></td>
+              <td><%=legal_agent.person.user.email %></td>
+              <td><%=legal_agent.person.identification_number %></td>
+              <td><%=link_to 'Ver', legal_agent ,:class=>'btn btn-default'%></td>
+            </tr>
+        <%end%>
+      </table>
+  <%end%>
+
+</div>
+
+  <div class="row">
+  <div class="col-xs-6 col-sm-3  "></div>
+      <div class="col-xs-6 col-sm-3  ">
+        <%= link_to 'Volver a registrar proyecto', new_project_path ,class: 'btn btn-primary'%>
+      </div>  
+    
+      <div class="col-xs-6 col-sm-3 ">
+        <%= link_to 'Registrar Representante Legal', '/legal_agents/new/'+@company.id.to_s ,class:'btn btn-info'%>
+      </div>  
+  </div>

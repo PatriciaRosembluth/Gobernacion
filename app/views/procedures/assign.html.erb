@@ -1,0 +1,44 @@
+<h1>Asignar tramite a revisor</h1>
+<br/>
+<h3>Tramites en estado inicial</h3>
+<br/>
+<%if @procedures.empty? %>
+    <div class="row center actions">
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          En este momento no hay tramites que necesiten asignacion de un revisor
+        </div>
+      </div>
+    </div>
+<%else%>
+    <h4>Entre parentesis se presenta el numero de tramites que el empleado esta revisando actualmente</h4>
+    <br/>
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th>Proyecto</th>
+        <th>Revisor</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @procedures.each do |procedure| %>
+          <tr>
+            <td>(<%= procedure.project.company.name%>) <%= procedure.project.name %> </td>
+            <td>
+              <div class="form-inline">
+                    <%=form_tag procedure.id.to_s+'/update' do%>
+                        <%= hidden_field :procedure, :state, value:'2'%>
+                        <select class="form-control" style='width:40%;' name="procedure[user_id]">
+                            <% @users.each do |user|%>
+                                <option value=<%=user.id%>> <%=user.person.first_name+' '+user.person.last_name+' '+user.current_procedures_assigned%> </option>
+                            <%end%>
+                        </select>
+                        <%= submit_tag :Asignar ,:class=>'btn btn-primary'%>
+                    <%end%>
+              </div>
+            </td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+<%end%>
